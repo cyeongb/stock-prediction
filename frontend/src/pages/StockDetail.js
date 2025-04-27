@@ -91,6 +91,11 @@ const StockDetail = ({ koreanStockNames, koreanSectorNames }) => {
           setPredictionData(predictionResponse.data);
         } catch (error) {
           console.error('예측 데이터를 불러오는 중 오류 발생:', error);
+          if (error.response) {
+            // 서버 응답이 있는 경우
+            console.error('서버 오류 상태:', error.response.status);
+            console.error('서버 오류 데이터:', error.response.data);
+          }
           
           // 가짜 예측 데이터 생성
           // basePrice는 상위 스코프에서 접근 가능
