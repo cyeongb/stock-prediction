@@ -1,0 +1,766 @@
+/* 기본 설정 및 다크 모드 */
+:root {
+  --primary: #e50914;
+  --primary-hover: #f40612;
+  --secondary: #564d4d;
+  --dark-bg: #141414;
+  --darker-bg: #0b0b0b;
+  --dark-card: #181818;
+  --dark-card-hover: #282828;
+  --light-bg: #f5f5f5;
+  --light-card: #ffffff;
+  --light-text: #e5e5e5;
+  --dark-text: #333333;
+  --gray-text: #999999;
+  --success: #46d369;
+  --warning: #e6b800;
+  --danger: #e50914;
+  --card-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  --transition: all 0.3s ease;
+}
+
+/* 글로벌 스타일 */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'Roboto', sans-serif;
+  transition: var(--transition);
+}
+
+.dark-mode {
+  background-color: var(--dark-bg);
+  color: var(--light-text);
+}
+
+.light-mode {
+  background-color: var(--light-bg);
+  color: var(--dark-text);
+}
+
+.app-container {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+/* 헤더 */
+.navbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem 2rem;
+  background-color: var(--darker-bg);
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+
+.navbar-logo {
+  font-size: 1.5rem;
+  font-weight: bold;
+  color: var(--primary);
+  text-decoration: none;
+  display: flex;
+  align-items: center;
+}
+
+.navbar-logo img {
+  height: 32px;
+  margin-right: 10px;
+}
+
+.navbar-actions {
+  display: flex;
+  align-items: center;
+}
+
+.theme-toggle, .sidebar-toggle {
+  background: none;
+  border: none;
+  color: var(--light-text);
+  font-size: 1.2rem;
+  cursor: pointer;
+  margin-left: 1rem;
+  transition: var(--transition);
+}
+
+.theme-toggle:hover, .sidebar-toggle:hover {
+  color: var(--primary);
+}
+
+/* 사이드바 */
+.sidebar {
+  width: 240px;
+  background-color: var(--darker-bg);
+  padding: 1rem;
+  overflow-y: auto;
+  height: 100vh;
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 200;
+  transform: translateX(-100%);
+  transition: transform 0.3s ease;
+}
+
+.sidebar.open {
+  transform: translateX(0);
+}
+
+/* 사이드바 스크롤바 커스텀 */
+.sidebar-stocks-container {
+  overflow-y: auto;
+  max-height: calc(100vh - 200px);
+}
+
+/* 사이드바 스크롤바 스타일링 */
+.sidebar-stocks-container::-webkit-scrollbar {
+  width: 5px;
+}
+
+.sidebar-stocks-container::-webkit-scrollbar-track {
+  background: var(--dark-bg);
+}
+
+.sidebar-stocks-container::-webkit-scrollbar-thumb {
+  background: var(--dark-card-hover);
+  border-radius: 10px;
+}
+
+.sidebar-stocks-container::-webkit-scrollbar-thumb:hover {
+  background: var(--secondary);
+}
+
+.sidebar-close {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  background: none;
+  border: none;
+  color: var(--light-text);
+  font-size: 1.2rem;
+  cursor: pointer;
+}
+
+.sidebar-section {
+  margin-bottom: 2rem;
+}
+
+.sidebar-section:first-child {
+  margin-top: 3rem;
+}
+
+.sidebar-title {
+  font-size: 1.1rem;
+  margin-bottom: 0.8rem;
+  color: var(--gray-text);
+  font-weight: 500;
+}
+
+.sidebar-items {
+  list-style: none;
+}
+
+.sidebar-item {
+  padding: 0.5rem;
+  cursor: pointer;
+  border-radius: 4px;
+  margin-bottom: 0.3rem;
+  transition: var(--transition);
+  display: flex;
+  align-items: center;
+}
+
+.sidebar-item:hover {
+  background-color: var(--dark-card-hover);
+}
+
+.sidebar-item.active {
+  background-color: var(--primary);
+  color: white;
+}
+
+.sidebar-item svg {
+  margin-right: 0.5rem;
+}
+
+.sidebar-item .symbol {
+  font-weight: bold;
+  margin-right: 0.5rem;
+}
+
+.sidebar-item .name {
+  font-size: 0.9rem;
+  margin-bottom: 0.2rem;
+}
+
+.sidebar-item .sector {
+  font-size: 0.8rem;
+  color: var(--gray-text);
+}
+
+/* 메인 콘텐츠 영역 */
+.content-wrapper {
+  display: flex;
+  flex: 1;
+}
+
+.main-content {
+  flex: 1;
+  padding: 1rem;
+  padding-bottom: 3rem;
+  transition: var(--transition);
+}
+
+.main-content.blur {
+  filter: blur(3px);
+  pointer-events: none;
+}
+
+/* 페이지 타이틀 */
+.page-title {
+  font-size: 2rem;
+  margin-bottom: 1.5rem;
+  font-weight: 600;
+  color: var(--light-text);
+}
+
+.section-title {
+  font-size: 1.5rem;
+  margin-bottom: 1rem;
+  font-weight: 500;
+  color: var(--light-text);
+}
+
+/* 대시보드 그리드 */
+.dashboard-grid, .watchlist-grid, .results-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 1.5rem;
+  margin-bottom: 2rem;
+}
+
+/* 카드 */
+.card {
+  background-color: var(--dark-card);
+  border-radius: 6px;
+  box-shadow: var(--card-shadow);
+  padding: 1.5rem;
+  transition: var(--transition);
+  overflow: hidden;
+}
+
+.light-mode .card {
+  background-color: var(--light-card);
+}
+
+.card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3);
+}
+
+.card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
+}
+
+.card-title {
+  font-size: 1.2rem;
+  font-weight: 500;
+}
+
+.card-body {
+  margin-bottom: 1rem;
+}
+
+.card-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 0.9rem;
+  color: var(--gray-text);
+}
+
+/* 주식 카드 */
+.stock-card {
+  cursor: pointer;
+}
+
+.stock-info {
+  display: flex;
+  flex-direction: column;
+}
+
+.stock-name {
+  font-size: 0.9rem;
+  color: var(--gray-text);
+}
+
+.watchlist-btn {
+  background: none;
+  border: none;
+  color: var(--gray-text);
+  cursor: pointer;
+  font-size: 1.2rem;
+  transition: var(--transition);
+}
+
+.watchlist-btn:hover {
+  color: var(--warning);
+}
+
+.watchlist-btn .starred {
+  color: var(--warning);
+}
+
+.price-info {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
+}
+
+.current-price {
+  font-size: 1.5rem;
+  font-weight: 600;
+}
+
+.price-change {
+  font-size: 1rem;
+  font-weight: 500;
+}
+
+.positive {
+  color: var(--success);
+}
+
+.negative {
+  color: var(--danger);
+}
+
+.mini-chart {
+  margin-bottom: 0.5rem;
+}
+
+/* 로딩 상태 */
+.loading-container {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  height: 300px;
+}
+
+.spinner {
+  border: 4px solid rgba(255, 255, 255, 0.1);
+  border-left: 4px solid var(--primary);
+  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+  animation: spin 1s linear infinite;
+  margin-bottom: 1rem;
+}
+
+.spinner-small {
+  border: 3px solid rgba(255, 255, 255, 0.1);
+  border-left: 3px solid var(--primary);
+  border-radius: 50%;
+  width: 20px;
+  height: 20px;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+.chart-loading {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 80px;
+}
+
+/* 예측 섹션 */
+.featured-prediction {
+  margin-bottom: 2rem;
+}
+
+.prediction-chart {
+  margin-bottom: 1rem;
+}
+
+.prediction-stats {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
+.stat-item {
+  display: flex;
+  flex-direction: column;
+}
+
+.stat-item .label {
+  font-size: 0.9rem;
+  color: var(--gray-text);
+}
+
+.stat-item .value {
+  font-size: 1.2rem;
+  font-weight: 500;
+}
+
+/* 예측 태그 스타일 */
+.prediction-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+}
+
+.prediction-tag {
+  padding: 0.5rem 1rem;
+  background-color: var(--dark-card);
+  border: none;
+  border-radius: 20px;
+  color: var(--light-text);
+  cursor: pointer;
+  transition: var(--transition);
+  font-size: 0.9rem;
+}
+
+.prediction-tag:hover {
+  background-color: var(--dark-card-hover);
+}
+
+.prediction-tag.active {
+  background-color: var(--primary);
+  color: white;
+}
+
+/* 주식 상세 페이지 */
+.stock-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 2rem;
+  flex-wrap: wrap;
+}
+
+.stock-title {
+  margin-bottom: 1rem;
+}
+
+.stock-title h1 {
+  font-size: 2.5rem;
+  margin-bottom: 0.5rem;
+}
+
+.stock-title h2 {
+  font-size: 1.5rem;
+  color: var(--gray-text);
+  font-weight: 400;
+}
+
+.stock-meta {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 1rem;
+}
+
+.meta-item {
+  display: flex;
+  flex-direction: column;
+}
+
+.meta-item .label {
+  font-size: 0.9rem;
+  color: var(--gray-text);
+}
+
+.meta-item .value {
+  font-size: 1.2rem;
+}
+
+.historical-chart-section, .prediction-section, .company-info-section {
+  margin-bottom: 2rem;
+}
+
+.chart-controls {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
+.control-group {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.control-btn {
+  padding: 0.5rem 1rem;
+  border: 1px solid var(--secondary);
+  background: none;
+  color: var(--light-text);
+  border-radius: 4px;
+  cursor: pointer;
+  transition: var(--transition);
+}
+
+.control-btn:hover {
+  background-color: rgba(255, 255, 255, 0.1);
+}
+
+.control-btn.active {
+  background-color: var(--primary);
+  border-color: var(--primary);
+  color: white;
+}
+
+.company-description {
+  line-height: 1.6;
+  margin-bottom: 1rem;
+}
+
+.company-website {
+  display: inline-block;
+  padding: 0.5rem 1rem;
+  background-color: var(--primary);
+  color: white;
+  text-decoration: none;
+  border-radius: 4px;
+  transition: var(--transition);
+}
+
+.company-website:hover {
+  background-color: var(--primary-hover);
+}
+
+/* 검색 페이지 */
+.search-form-container {
+  margin-bottom: 2rem;
+}
+
+.search-form {
+  display: flex;
+  max-width: 600px;
+}
+
+.search-input {
+  flex: 1;
+  padding: 0.8rem 1rem;
+  border: none;
+  border-radius: 4px 0 0 4px;
+  background-color: var(--dark-card);
+  color: var(--light-text);
+  font-size: 1rem;
+}
+
+.light-mode .search-input {
+  background-color: var(--light-card);
+  color: var(--dark-text);
+}
+
+.search-input:focus {
+  outline: none;
+  box-shadow: 0 0 0 2px var(--primary);
+}
+
+.search-button {
+  padding: 0.8rem 1.5rem;
+  background-color: var(--primary);
+  color: white;
+  border: none;
+  border-radius: 0 4px 4px 0;
+  cursor: pointer;
+  transition: var(--transition);
+}
+
+.search-button:hover {
+  background-color: var(--primary-hover);
+}
+
+.results-heading {
+  font-size: 1.5rem;
+  margin-bottom: 1rem;
+}
+
+.result-card {
+  padding: 1.5rem;
+  border-radius: 6px;
+  background-color: var(--dark-card);
+  cursor: pointer;
+  transition: var(--transition);
+}
+
+.light-mode .result-card {
+  background-color: var(--light-card);
+}
+
+.result-card:hover {
+  transform: translateY(-5px);
+  box-shadow: var(--card-shadow);
+}
+
+.no-results {
+  padding: 2rem;
+  text-align: center;
+  background-color: var(--dark-card);
+  border-radius: 6px;
+}
+
+.light-mode .no-results {
+  background-color: var(--light-card);
+}
+
+.popular-suggestions {
+  margin-top: 2rem;
+}
+
+.suggestion-buttons {
+  display: flex;
+  justify-content: center;
+  gap: 1rem;
+  margin-top: 1rem;
+}
+
+.suggestion-buttons button {
+  padding: 0.8rem 1.5rem;
+  background-color: var(--primary);
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: var(--transition);
+}
+
+.suggestion-buttons button:hover {
+  background-color: var(--primary-hover);
+}
+
+/* 관심종목 페이지 */
+.watchlist-empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.empty-message {
+  text-align: center;
+  padding: 3rem;
+  background-color: var(--dark-card);
+  border-radius: 6px;
+  max-width: 600px;
+}
+
+.light-mode .empty-message {
+  background-color: var(--light-card);
+}
+
+.empty-message h2 {
+  margin-bottom: 1rem;
+}
+
+.empty-message p {
+  margin-bottom: 1.5rem;
+  color: var(--gray-text);
+}
+
+.btn {
+  padding: 0.8rem 1.5rem;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: var(--transition);
+  font-weight: 500;
+}
+
+.btn.primary {
+  background-color: var(--primary);
+  color: white;
+}
+
+.btn.primary:hover {
+  background-color: var(--primary-hover);
+}
+
+/* 푸터 */
+.footer {
+  background-color: var(--darker-bg);
+  padding: 2rem;
+  margin-top: auto;
+}
+
+.footer-content {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 2rem;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.footer-title {
+  font-size: 1.2rem;
+  margin-bottom: 1rem;
+  color: var(--light-text);
+}
+
+.footer-description, .footer-disclaimer {
+  color: var(--gray-text);
+  line-height: 1.6;
+}
+
+.footer-list {
+  list-style: none;
+}
+
+.footer-list li {
+  margin-bottom: 0.5rem;
+  color: var(--gray-text);
+}
+
+.footer-bottom {
+  text-align: center;
+  margin-top: 2rem;
+  padding-top: 1rem;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  color: var(--gray-text);
+}
+
+/* 미디어 쿼리 - 반응형 */
+@media (max-width: 768px) {
+  .navbar {
+    padding: 0.8rem 1rem;
+  }
+  
+  .stock-header {
+    flex-direction: column;
+  }
+  
+  .stock-meta {
+    grid-template-columns: 1fr;
+  }
+  
+  .chart-controls {
+    flex-direction: column;
+  }
+  
+  .prediction-stats {
+    flex-direction: column;
+  }
+  
+  .footer-content {
+    grid-template-columns: 1fr;
+  }
+}
