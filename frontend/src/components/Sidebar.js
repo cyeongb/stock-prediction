@@ -1,23 +1,21 @@
 import React from 'react';
-import { Link, useLocation, useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 
 // 아이콘
-import { FaHome, FaChartLine, FaRegStar, FaTimes } from 'react-icons/fa';
+import { FaHome, FaRegStar, FaTimes } from 'react-icons/fa';
 
-const Sidebar = ({ popularStocks, setSelectedStock, isMobile, closeSidebar, sidebarOpen }) => {
+const Sidebar = ({ popularStocks, setSelectedStock, closeSidebar, sidebarOpen }) => {
   const location = useLocation();
   const navigate = useNavigate();
 
   const handleStockClick = (symbol) => {
     setSelectedStock(symbol);
     navigate(`/stock/${symbol}`);
-    if (isMobile) {
-      closeSidebar();
-    }
+    closeSidebar();
   };
 
   return (
-    <aside className={`sidebar ${sidebarOpen ? 'open' : ''}`}>
+    <aside className={`sidebar right-sidebar ${sidebarOpen ? 'open' : ''}`}>
       <button className="sidebar-close" onClick={closeSidebar}>
         <FaTimes />
       </button>
@@ -56,9 +54,11 @@ const Sidebar = ({ popularStocks, setSelectedStock, isMobile, closeSidebar, side
                 className={`sidebar-item ${location.pathname === `/stock/${stock.symbol}` ? 'active' : ''}`}
                 onClick={() => handleStockClick(stock.symbol)}
               >
-                <div className="symbol">{stock.symbol}</div>
-                <div className="name">{stock.name}</div>
-                <div className="sector">{stock.sector}</div>
+                <div className="stock-item-content">
+                  <div className="symbol">{stock.symbol}</div>
+                  <div className="korean-name">{stock.koreanName}</div>
+                  <div className="sector">{stock.koreanSector || stock.sector}</div>
+                </div>
               </li>
             ))}
           </ul>

@@ -6,12 +6,14 @@ import Plot from 'react-plotly.js';
 // 컴포넌트
 import StockCard from '../components/StockCard';
 
-const Dashboard = ({ popularStocks }) => {
+const Dashboard = ({ popularStocks, koreanStockNames }) => {
   const [trendingStocks, setTrendingStocks] = useState([]);
   const [marketIndices, setMarketIndices] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [selectedPreviewStock, setSelectedPreviewStock] = useState('AAPL'); // 기본값은 AAPL
   const [predictionData, setPredictionData] = useState(null);
+  const [predictionLoading, setPredictionLoading] = useState(false); // 예측 섹션 로딩 상태
+  const [lastUpdateTime, setLastUpdateTime] = useState(new Date().toLocaleString()); // 업데이트 시간
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -23,6 +25,7 @@ const Dashboard = ({ popularStocks }) => {
           // 각 인기 주식의 기본 정보 가져오기
           const stockDetailsPromises = popularStocks.slice(0, 5).map(stock => 
             axios.get(`/stocks/info/${stock.symbol}`)
+              .catch(() => ({ data: { symbol: stock.symbol, name: stock.name, sector: stock.sector } }))
           );
           
           const stockDetails = await Promise.all(stockDetailsPromises);
@@ -40,6 +43,21 @@ const Dashboard = ({ popularStocks }) => {
         const indicesSymbols = ['^GSPC', '^IXIC', '^DJI', '^VIX'];
         const indicesPromises = indicesSymbols.map(symbol => 
           axios.get(`/stocks/history/${symbol}`, { params: { timeframe: 'daily', period: '1mo' }})
+            .catch(() => {
+              // 오류 시 가짜 데이터 생성
+              const dates = Array.from({ length: 30 }, (_, i) => 
+                new Date(Date.now() - (29 - i) * 24 * 60 * 60 * 1000).toISOString().slice(0, 10)
+              );
+              
+              const values = Array.from({ length: 30 }, (_, i) => {
+                const baseValue = symbol === '^GSPC' ? 5000 : 
+                                symbol === '^IXIC' ? 17000 : 
+                                symbol === '^DJI' ? 40000 : 25;
+                return baseValue + (Math.random() - 0.5) * (baseValue * 0.1);
+              });
+              
+              return { data: { dates, close: values } };
+            })
         );
         
         const indicesData = await Promise.all(indicesPromises);
@@ -57,8 +75,8 @@ const Dashboard = ({ popularStocks }) => {
             price: lastPrice,
             change,
             data: {
-              dates: data.dates.slice(-30),
-              values: data.close.slice(-30)
+              dates: data.dates ? data.dates.slice(-30) : [],
+              values: data.close ? data.close.slice(-30) : []
             }
           };
         });
@@ -76,15 +94,24 @@ const Dashboard = ({ popularStocks }) => {
     };
     
     fetchDashboardData();
+    
+    // 선택적: 1분마다 업데이트 설정
+    // const intervalId = setInterval(() => {
+    //   fetchPredictionData(selectedPreviewStock);
+    // }, 60000); // 60000ms = 1분
+    
+    // return () => clearInterval(intervalId);
   }, [popularStocks]);
   
-  // 주가 예측 데이터 가져오기
+  // 주가 예측 데이터 가져오기 - AJAX 구현
   const fetchPredictionData = async (symbol) => {
+    setPredictionLoading(true);
     try {
       const response = await axios.get(`/stocks/predict/${symbol}`, {
         params: { days: 30 }
       });
       setPredictionData(response.data);
+      setLastUpdateTime(new Date().toLocaleString()); // 업데이트 시간 기록
     } catch (error) {
       console.error(`${symbol} 예측 데이터를 불러오는 중 오류 발생:`, error);
       
@@ -113,6 +140,9 @@ const Dashboard = ({ popularStocks }) => {
         }
       };
       setPredictionData(fakePredictionData);
+      setLastUpdateTime(new Date().toLocaleString()); // 업데이트 시간 기록
+    } finally {
+      setPredictionLoading(false);
     }
   };
   
@@ -132,7 +162,7 @@ const Dashboard = ({ popularStocks }) => {
     navigate(`/stock/${symbol}`);
   };
 
-  // 태그 클릭 처리
+  // 태그 클릭 처리 - AJAX 방식
   const handleTagClick = (symbol) => {
     setSelectedPreviewStock(symbol);
     fetchPredictionData(symbol);
@@ -205,7 +235,8 @@ const Dashboard = ({ popularStocks }) => {
             <StockCard 
               key={stock.symbol} 
               stock={stock} 
-              onClick={() => handleStockClick(stock.symbol)} 
+              onClick={() => handleStockClick(stock.symbol)}
+              koreanStockNames={koreanStockNames}
             />
           ))}
         </div>
@@ -221,14 +252,16 @@ const Dashboard = ({ popularStocks }) => {
               className={`prediction-tag ${selectedPreviewStock === symbol ? 'active' : ''}`}
               onClick={() => handleTagClick(symbol)}
             >
-              #{symbol}
+              #{symbol} {koreanStockNames[symbol] ? `(${koreanStockNames[symbol]})` : ''}
             </button>
           ))}
         </div>
         
         <div className="card featured-prediction">
           <div className="card-header">
-            <h3 className="card-title">{selectedPreviewStock} 향후 30일 예측 결과</h3>
+            <h3 className="card-title">
+              {selectedPreviewStock} {koreanStockNames[selectedPreviewStock] ? `(${koreanStockNames[selectedPreviewStock]})` : ''} 향후 30일 예측 결과
+            </h3>
             <button 
               className="btn primary"
               onClick={() => navigate(`/stock/${selectedPreviewStock}`)}
@@ -237,64 +270,71 @@ const Dashboard = ({ popularStocks }) => {
             </button>
           </div>
           <div className="card-body">
-            <div className="prediction-chart">
-              {predictionData && (
-                <Plot
-                  data={[
-                    {
-                      name: '실제 가격',
-                      x: predictionData.actual.dates,
-                      y: predictionData.actual.test_actual,
-                      type: 'scatter',
-                      mode: 'lines',
-                      line: { color: '#3366cc', width: 2 }
-                    },
-                    {
-                      name: '예측 가격',
-                      x: predictionData.prediction.dates,
-                      y: predictionData.prediction.values,
-                      type: 'scatter',
-                      mode: 'lines',
-                      line: { color: '#46d369', width: 2, dash: 'dash' }
-                    }
-                  ]}
-                  layout={{
-                    title: `${selectedPreviewStock} 주가 예측`,
-                    autosize: true,
-                    height: 400,
-                    margin: { l: 50, r: 50, t: 50, b: 50 },
-                    paper_bgcolor: 'transparent',
-                    plot_bgcolor: 'rgba(0,0,0,0.1)',
-                    font: { color: '#e5e5e5' },
-                    xaxis: { showgrid: false },
-                    yaxis: { title: '주가 ($)' },
-                    legend: { orientation: 'h', y: 1.1 },
-                    shapes: [
-                      // 현재와 미래를 구분하는 세로선
+            {predictionLoading ? (
+              <div className="prediction-loading">
+                <div className="spinner"></div>
+                <p>예측 데이터를 불러오는 중...</p>
+              </div>
+            ) : (
+              <div className="prediction-chart">
+                {predictionData && (
+                  <Plot
+                    data={[
                       {
-                        type: 'line',
-                        x0: predictionData.actual.dates[predictionData.actual.dates.length - 1],
-                        y0: 0,
-                        x1: predictionData.actual.dates[predictionData.actual.dates.length - 1],
-                        y1: 1,
-                        yref: 'paper',
-                        line: {
-                          color: 'rgba(255, 255, 255, 0.5)',
-                          width: 1,
-                          dash: 'dash'
-                        }
+                        name: '실제 가격',
+                        x: predictionData.actual.dates,
+                        y: predictionData.actual.test_actual,
+                        type: 'scatter',
+                        mode: 'lines',
+                        line: { color: '#3366cc', width: 2 }
+                      },
+                      {
+                        name: '예측 가격',
+                        x: predictionData.prediction.dates,
+                        y: predictionData.prediction.values,
+                        type: 'scatter',
+                        mode: 'lines',
+                        line: { color: '#46d369', width: 2, dash: 'dash' }
                       }
-                    ]
-                  }}
-                  config={{ responsive: true }}
-                  style={{ width: '100%' }}
-                />
-              )}
-            </div>
+                    ]}
+                    layout={{
+                      title: `${selectedPreviewStock} ${koreanStockNames[selectedPreviewStock] ? `(${koreanStockNames[selectedPreviewStock]})` : ''} 주가 예측`,
+                      autosize: true,
+                      height: 400,
+                      margin: { l: 50, r: 50, t: 50, b: 50 },
+                      paper_bgcolor: 'transparent',
+                      plot_bgcolor: 'rgba(0,0,0,0.1)',
+                      font: { color: '#e5e5e5' },
+                      xaxis: { showgrid: false },
+                      yaxis: { title: '주가 ($)' },
+                      legend: { orientation: 'h', y: 1.1 },
+                      shapes: [
+                        // 현재와 미래를 구분하는 세로선
+                        {
+                          type: 'line',
+                          x0: predictionData.actual.dates[predictionData.actual.dates.length - 1],
+                          y0: 0,
+                          x1: predictionData.actual.dates[predictionData.actual.dates.length - 1],
+                          y1: 1,
+                          yref: 'paper',
+                          line: {
+                            color: 'rgba(255, 255, 255, 0.5)',
+                            width: 1,
+                            dash: 'dash'
+                          }
+                        }
+                      ]
+                    }}
+                    config={{ responsive: true }}
+                    style={{ width: '100%' }}
+                  />
+                )}
+              </div>
+            )}
           </div>
           <div className="card-footer">
             <p>딥러닝 모델 기반 예측 - 정확도: 85%</p>
-            <p>마지막 업데이트: {new Date().toLocaleDateString()}</p>
+            <p>마지막 업데이트: {lastUpdateTime}</p>
           </div>
         </div>
       </section>

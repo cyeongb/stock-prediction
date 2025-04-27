@@ -1,7 +1,7 @@
 import React from 'react';
 import Plot from 'react-plotly.js';
 
-const PredictionChart = ({ predictionData }) => {
+const PredictionChart = ({ predictionData, koreanName }) => {
   if (!predictionData) return null;
 
   // 테스트 데이터와 예측 데이터를 구성
@@ -17,6 +17,9 @@ const PredictionChart = ({ predictionData }) => {
   const lastPredictedPrice = futurePredValues[futurePredValues.length - 1];
   const priceChange = lastPredictedPrice - lastActualPrice;
   const predictionColor = priceChange >= 0 ? '#46d369' : '#e50914';
+
+  // 주식 심볼과 한국어 이름 결합
+  const stockTitle = predictionData.ticker + (koreanName ? ` (${koreanName})` : '');
 
   return (
     <div className="prediction-chart">
@@ -61,7 +64,7 @@ const PredictionChart = ({ predictionData }) => {
           }
         ]}
         layout={{
-          title: '딥러닝 모델 주가 예측 결과',
+          title: `${stockTitle} 딥러닝 모델 주가 예측 결과`,
           autosize: true,
           height: 500,
           margin: { l: 50, r: 50, t: 80, b: 50 },

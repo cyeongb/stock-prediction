@@ -9,7 +9,6 @@ import Dashboard from './pages/Dashboard';
 import StockDetail from './pages/StockDetail';
 import Search from './pages/Search';
 import Watchlist from './pages/Watchlist';
-import Footer from './components/Footer';
 
 // 스타일
 import './App.css';
@@ -18,12 +17,60 @@ import './App.css';
 const API_BASE_URL = 'http://localhost:5000/api';
 axios.defaults.baseURL = API_BASE_URL;
 
+// 한국어 주식명 매핑
+const koreanStockNames = {
+  'AAPL': '애플',
+  'MSFT': '마이크로소프트',
+  'GOOGL': '알파벳',
+  'AMZN': '아마존',
+  'TSLA': '테슬라',
+  'META': '메타플랫폼스',
+  'NVDA': '엔비디아',
+  'JPM': 'JP모건체이스',
+  'V': '비자',
+  'WMT': '월마트',
+  'NFLX': '넷플릭스',
+  'ADBE': '어도비',
+  'CRM': '세일즈포스',
+  'CSCO': '시스코',
+  'PEP': '펩시코',
+  'INTC': '인텔',
+  'AMD': 'AMD',
+  'PYPL': '페이팔',
+  'CMCSA': '컴캐스트',
+  'COST': '코스트코',
+  'DIS': '디즈니',
+  'TMUS': 'T-모바일',
+  'IBM': 'IBM',
+  'GS': '골드만삭스',
+  'BA': '보잉',
+  'UNH': '유나이티드헬스',
+  'HD': '홈디포',
+  'PG': '프록터앤갬블',
+  'JNJ': '존슨앤존슨',
+  'KO': '코카콜라'
+};
+
+// 섹터 한글명 매핑
+const koreanSectorNames = {
+  'Technology': '기술',
+  'Consumer Cyclical': '소비재',
+  'Communication Services': '통신 서비스',
+  'Financial Services': '금융 서비스',
+  'Consumer Defensive': '필수 소비재',
+  'Healthcare': '헬스케어',
+  'Industrials': '산업재',
+  'Software - Infrastructure': '소프트웨어 - 인프라',
+  'Internet Content & Information': '인터넷 콘텐츠 및 정보',
+  'Internet Retail': '인터넷 소매',
+  'Auto Manufacturers': '자동차 제조',
+  'Beverage - Non-Alcoholic': '음료 - 비알콜'
+};
+
 function App() {
   const [selectedStock, setSelectedStock] = useState('AAPL');
   const [popularStocks, setPopularStocks] = useState([]);
   const [sidebarOpen, setSidebarOpen] = useState(false);
-  const [darkMode, setDarkMode] = useState(true); // 기본 다크모드
-  const [isMobile, setIsMobile] = useState(window.innerWidth <= 768);
 
   // 인기 주식 가져오기 (20개로 확장)
   useEffect(() => {
@@ -65,7 +112,14 @@ function App() {
           expandedStocks = [...expandedStocks, ...extraStocks.slice(0, neededCount)];
         }
         
-        setPopularStocks(expandedStocks);
+        // 한국어 이름 추가
+        const stocksWithKoreanNames = expandedStocks.map(stock => ({
+          ...stock,
+          koreanName: koreanStockNames[stock.symbol] || stock.name,
+          koreanSector: koreanSectorNames[stock.sector] || stock.sector
+        }));
+        
+        setPopularStocks(stocksWithKoreanNames);
       } catch (error) {
         console.error('인기 주식을 불러오는데 실패했습니다:', error);
         
@@ -91,7 +145,11 @@ function App() {
           {symbol: 'PYPL', name: 'PayPal Holdings, Inc.', sector: 'Financial Services'},
           {symbol: 'CMCSA', name: 'Comcast Corporation', sector: 'Communication Services'},
           {symbol: 'COST', name: 'Costco Wholesale Corporation', sector: 'Consumer Defensive'}
-        ];
+        ].map(stock => ({
+          ...stock,
+          koreanName: koreanStockNames[stock.symbol] || stock.name,
+          koreanSector: koreanSectorNames[stock.sector] || stock.sector
+        }));
         
         setPopularStocks(fallbackStocks);
       }
@@ -100,26 +158,6 @@ function App() {
     fetchPopularStocks();
   }, []);
 
-  // 반응형 처리
-  useEffect(() => {
-    const handleResize = () => {
-      setIsMobile(window.innerWidth <= 768);
-      if (window.innerWidth > 768) {
-        setSidebarOpen(false);
-      }
-    };
-
-    window.addEventListener('resize', handleResize);
-    return () => {
-      window.removeEventListener('resize', handleResize);
-    };
-  }, []);
-
-  // 다크모드 토글
-  useEffect(() => {
-    document.body.className = darkMode ? 'dark-mode' : 'light-mode';
-  }, [darkMode]);
-
   // 사이드바 토글
   const toggleSidebar = () => {
     setSidebarOpen(!sidebarOpen);
@@ -127,37 +165,32 @@ function App() {
 
   return (
     <Router>
-      <div className="app-container">
+      <div className={`app-container ${sidebarOpen ? 'sidebar-open' : ''}`}>
         <Navbar 
-          toggleSidebar={toggleSidebar} 
-          darkMode={darkMode} 
-          setDarkMode={setDarkMode} 
-          hideSearch={true} // 검색 숨김 설정 추가
+          toggleSidebar={toggleSidebar}
         />
         
-        <div className="content-wrapper">
+        <div className="content-container">
+          <main className="main-content">
+            <Routes>
+              <Route path="/" element={<Navigate to="/dashboard" />} />
+              <Route path="/dashboard" element={<Dashboard popularStocks={popularStocks} koreanStockNames={koreanStockNames} />} />
+              <Route path="/stock/:ticker" element={<StockDetail koreanStockNames={koreanStockNames} koreanSectorNames={koreanSectorNames} />} />
+              <Route path="/search" element={<Search setSelectedStock={setSelectedStock} koreanStockNames={koreanStockNames} />} />
+              <Route path="/watchlist" element={<Watchlist setSelectedStock={setSelectedStock} koreanStockNames={koreanStockNames} />} />
+            </Routes>
+          </main>
+          
           {sidebarOpen && (
             <Sidebar 
               popularStocks={popularStocks} 
               setSelectedStock={setSelectedStock} 
-              isMobile={isMobile}
               closeSidebar={() => setSidebarOpen(false)}
+              koreanStockNames={koreanStockNames}
               sidebarOpen={sidebarOpen}
             />
           )}
-          
-          <main className={`main-content ${sidebarOpen && isMobile ? 'blur' : ''}`}>
-            <Routes>
-              <Route path="/" element={<Navigate to="/dashboard" />} />
-              <Route path="/dashboard" element={<Dashboard popularStocks={popularStocks} />} />
-              <Route path="/stock/:ticker" element={<StockDetail />} />
-              <Route path="/search" element={<Search setSelectedStock={setSelectedStock} />} />
-              <Route path="/watchlist" element={<Watchlist setSelectedStock={setSelectedStock} />} />
-            </Routes>
-          </main>
         </div>
-        
-        <Footer />
       </div>
     </Router>
   );

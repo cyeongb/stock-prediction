@@ -5,7 +5,7 @@ import Plot from 'react-plotly.js';
 // 아이콘
 import { FaStar, FaRegStar } from 'react-icons/fa';
 
-const StockCard = ({ stock, onClick }) => {
+const StockCard = ({ stock, onClick, koreanStockNames }) => {
   const [chartData, setChartData] = useState(null);
   const [isWatchlisted, setIsWatchlisted] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
@@ -35,6 +35,17 @@ const StockCard = ({ stock, onClick }) => {
         setChartData(processedData);
       } catch (error) {
         console.error(`${stock.symbol} 차트 데이터를 불러오는 중 오류 발생:`, error);
+        
+        // 오류 시 랜덤 데이터 생성 (데모용)
+        const fakeData = {
+          dates: Array.from({ length: 14 }, (_, i) => 
+            new Date(Date.now() - (13 - i) * 24 * 60 * 60 * 1000).toISOString().slice(0, 10)
+          ),
+          values: Array.from({ length: 14 }, (_, i) => 
+            100 + Math.random() * 20 + i
+          )
+        };
+        setChartData(fakeData);
       } finally {
         setIsLoading(false);
       }
@@ -68,12 +79,15 @@ const StockCard = ({ stock, onClick }) => {
     ? ((stock.market_cap / 1000000) % 10) - 5 // 임의의 변화율 (실제로는 API에서 가져온 값 사용)
     : 0;
 
+  // 한국어 이름 가져오기
+  const koreanName = koreanStockNames[stock.symbol] || stock.name;
+
   return (
     <div className="card stock-card" onClick={onClick}>
       <div className="card-header">
         <div className="stock-info">
-          <h3 className="card-title">{stock.symbol}</h3>
-          <div className="stock-name">{stock.name}</div>
+          <div className="stock-symbol">{stock.symbol}</div>
+          <div className="stock-korean-name">{koreanName}</div>
         </div>
         <button 
           className="watchlist-btn" 
