@@ -91,10 +91,18 @@ const StockDetail = ({ koreanStockNames, koreanSectorNames }) => {
           setPredictionData(predictionResponse.data);
         } catch (error) {
           console.error('예측 데이터를 불러오는 중 오류 발생:', error);
+          
+          // 오류 상세 정보 로깅 추가
           if (error.response) {
-            // 서버 응답이 있는 경우
+            // 서버에서 응답이 왔지만 오류 상태 코드인 경우
             console.error('서버 오류 상태:', error.response.status);
             console.error('서버 오류 데이터:', error.response.data);
+          } else if (error.request) {
+            // 요청은 보냈지만 응답이 없는 경우
+            console.error('응답이 없습니다. 서버가 실행 중인지 확인하세요.');
+          } else {
+            // 요청 설정 중 오류가 발생한 경우
+            console.error('요청 오류:', error.message);
           }
           
           // 가짜 예측 데이터 생성
@@ -103,32 +111,31 @@ const StockDetail = ({ koreanStockNames, koreanSectorNames }) => {
             historicalData.close[historicalData.close.length - 1] : 
             basePrice; // 이제 basePrice 접근 가능
           
-          const fakePredictionData = {
-            ticker,
-            last_price: lastPrice,
-            prediction: {
-              dates: Array.from({ length: 30 }, (_, i) => 
-                new Date(Date.now() + i * 24 * 60 * 60 * 1000).toISOString().slice(0, 10)
-              ),
-              values: Array.from({ length: 30 }, (_, i) => 
-                lastPrice * (1 + (i / 100) + (Math.random() - 0.5) * 0.05)
-              )
-            },
-            actual: {
-              dates: Array.from({ length: 30 }, (_, i) => 
-                new Date(Date.now() - (30 - i) * 24 * 60 * 60 * 1000).toISOString().slice(0, 10)
-              ),
-              test_actual: Array.from({ length: 30 }, (_, i) => 
-                lastPrice * (1 - ((30 - i) / 100) + (Math.random() - 0.5) * 0.05)
-              ),
-              test_pred: Array.from({ length: 30 }, (_, i) => 
-                lastPrice * (1 - ((30 - i) / 100) + (Math.random() - 0.5) * 0.07)
-              )
-            }
-          };
-          
-          setPredictionData(fakePredictionData);
-        }
+            const fakePredictionData = {
+              ticker,
+              last_price: basePrice, // 상위 스코프에 선언된 basePrice 사용
+              prediction: {
+                dates: Array.from({ length: 30 }, (_, i) => 
+                  new Date(Date.now() + i * 24 * 60 * 60 * 1000).toISOString().slice(0, 10)
+                ),
+                values: Array.from({ length: 30 }, (_, i) => 
+                  basePrice * (1 + (i / 100) + (Math.random() - 0.5) * 0.05)
+                )
+              },
+              actual: {
+                dates: Array.from({ length: 30 }, (_, i) => 
+                  new Date(Date.now() - (30 - i) * 24 * 60 * 60 * 1000).toISOString().slice(0, 10)
+                ),
+                test_actual: Array.from({ length: 30 }, (_, i) => 
+                  basePrice * (1 - ((30 - i) / 100) + (Math.random() - 0.5) * 0.05)
+                ),
+                test_pred: Array.from({ length: 30 }, (_, i) => 
+                  basePrice * (1 - ((30 - i) / 100) + (Math.random() - 0.5) * 0.07)
+                )
+              }
+            };
+            setPredictionData(fakePredictionData);
+          }
       } catch (error) {
         console.error('주식 데이터를 불러오는 중 오류 발생:', error);
       } finally {

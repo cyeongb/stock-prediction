@@ -14,7 +14,7 @@ import Watchlist from './pages/Watchlist';
 import './App.css';
 
 // API 기본 설정
-const API_BASE_URL = 'http://localhost:5000/api';
+const API_BASE_URL = 'http://localhost:3000/api';
 axios.defaults.baseURL = API_BASE_URL;
 
 // 한국어 주식명 매핑
@@ -64,7 +64,24 @@ const koreanSectorNames = {
   'Internet Content & Information': '인터넷 콘텐츠 및 정보',
   'Internet Retail': '인터넷 소매',
   'Auto Manufacturers': '자동차 제조',
-  'Beverage - Non-Alcoholic': '음료 - 비알콜'
+  'Semiconductors': '반도체',
+  'Banks - Diversified': '은행 - 다각화',
+  'Credit Services': '신용 서비스',
+  'Discount Stores': '할인점',
+  'Beverages - Non-Alcoholic': '음료 - 비알콜',
+  'Electronic Components': '전자 부품',
+  'Software - Application': '소프트웨어 - 애플리케이션',
+  'Telecom Services': '통신 서비스',
+  'Specialty Retail': '전문 소매',
+  'Medical Devices': '의료 기기',
+  'Pharmaceutical Retailers': '제약 소매',
+  'Insurance - Diversified': '보험 - 다각화',
+  'Restaurants': '레스토랑',
+  'Aerospace & Defense': '항공우주 및 방위',
+  'Entertainment': '엔터테인먼트',
+  'Drug Manufacturers': '제약 제조',
+  'Biotechnology': '생명공학',
+  'Computer Hardware': '컴퓨터 하드웨어'
 };
 
 function App() {
@@ -112,11 +129,12 @@ function App() {
           expandedStocks = [...expandedStocks, ...extraStocks.slice(0, neededCount)];
         }
         
-        // 한국어 이름 추가
+        // 한국어 이름 및 섹터 추가
         const stocksWithKoreanNames = expandedStocks.map(stock => ({
           ...stock,
           koreanName: koreanStockNames[stock.symbol] || stock.name,
-          koreanSector: koreanSectorNames[stock.sector] || stock.sector
+          koreanSector: koreanSectorNames[stock.sector] || stock.sector,
+          koreanIndustry: koreanSectorNames[stock.industry] || stock.industry
         }));
         
         setPopularStocks(stocksWithKoreanNames);
@@ -148,7 +166,8 @@ function App() {
         ].map(stock => ({
           ...stock,
           koreanName: koreanStockNames[stock.symbol] || stock.name,
-          koreanSector: koreanSectorNames[stock.sector] || stock.sector
+          koreanSector: koreanSectorNames[stock.sector] || stock.sector,
+          koreanIndustry: koreanSectorNames[stock.industry] || stock.industry
         }));
         
         setPopularStocks(fallbackStocks);
@@ -174,10 +193,10 @@ function App() {
           <main className="main-content">
             <Routes>
               <Route path="/" element={<Navigate to="/dashboard" />} />
-              <Route path="/dashboard" element={<Dashboard popularStocks={popularStocks} koreanStockNames={koreanStockNames} />} />
+              <Route path="/dashboard" element={<Dashboard popularStocks={popularStocks} koreanStockNames={koreanStockNames} koreanSectorNames={koreanSectorNames} />} />
               <Route path="/stock/:ticker" element={<StockDetail koreanStockNames={koreanStockNames} koreanSectorNames={koreanSectorNames} />} />
-              <Route path="/search" element={<Search setSelectedStock={setSelectedStock} koreanStockNames={koreanStockNames} />} />
-              <Route path="/watchlist" element={<Watchlist setSelectedStock={setSelectedStock} koreanStockNames={koreanStockNames} />} />
+              <Route path="/search" element={<Search setSelectedStock={setSelectedStock} koreanStockNames={koreanStockNames} koreanSectorNames={koreanSectorNames} />} />
+              <Route path="/watchlist" element={<Watchlist setSelectedStock={setSelectedStock} koreanStockNames={koreanStockNames} koreanSectorNames={koreanSectorNames} />} />
             </Routes>
           </main>
           
@@ -187,6 +206,7 @@ function App() {
               setSelectedStock={setSelectedStock} 
               closeSidebar={() => setSidebarOpen(false)}
               koreanStockNames={koreanStockNames}
+              koreanSectorNames={koreanSectorNames}
               sidebarOpen={sidebarOpen}
             />
           )}

@@ -6,7 +6,7 @@ import Plot from 'react-plotly.js';
 // 컴포넌트
 import StockCard from '../components/StockCard';
 
-const Dashboard = ({ popularStocks, koreanStockNames }) => {
+const Dashboard = ({ popularStocks, koreanStockNames, koreanSectorNames }) => {
   const [trendingStocks, setTrendingStocks] = useState([]);
   const [marketIndices, setMarketIndices] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -16,24 +16,38 @@ const Dashboard = ({ popularStocks, koreanStockNames }) => {
   const [lastUpdateTime, setLastUpdateTime] = useState(new Date().toLocaleString()); // 업데이트 시간
   const navigate = useNavigate();
 
+  // 대시보드에 표시할 주식 수 증가 (5개 -> 10개)
+  const DISPLAY_STOCK_COUNT = 10;
+  
+  // 예측 미리보기에 표시할 주식 수 증가 (5개 -> 10개)
+  const DISPLAY_PREDICTION_COUNT = 10;
+
   useEffect(() => {
     const fetchDashboardData = async () => {
       setIsLoading(true);
       try {
         // 인기 주식 가져오기 (popularStocks를 props로 받음)
         if (popularStocks.length > 0) {
-          // 각 인기 주식의 기본 정보 가져오기
-          const stockDetailsPromises = popularStocks.slice(0, 5).map(stock => 
+          // 각 인기 주식의 기본 정보 가져오기 (10개로 증가)
+          const stockDetailsPromises = popularStocks.slice(0, DISPLAY_STOCK_COUNT).map(stock => 
             axios.get(`/stocks/info/${stock.symbol}`)
-              .catch(() => ({ data: { symbol: stock.symbol, name: stock.name, sector: stock.sector } }))
+              .catch(() => ({ data: { 
+                symbol: stock.symbol, 
+                name: stock.name, 
+                sector: stock.sector,
+                industry: stock.industry || 'N/A'
+              }}))
           );
           
           const stockDetails = await Promise.all(stockDetailsPromises);
           
           // 상세 정보 합치기
-          const stocksWithDetails = popularStocks.slice(0, 5).map((stock, index) => ({
+          const stocksWithDetails = popularStocks.slice(0, DISPLAY_STOCK_COUNT).map((stock, index) => ({
             ...stock,
-            ...stockDetails[index].data
+            ...stockDetails[index].data,
+            // 한국어 섹터 및 산업 추가
+            koreanSector: koreanSectorNames[stock.sector] || stock.sector,
+            koreanIndustry: koreanSectorNames[stock.industry] || stock.industry
           }));
           
           setTrendingStocks(stocksWithDetails);
@@ -101,7 +115,7 @@ const Dashboard = ({ popularStocks, koreanStockNames }) => {
     // }, 60000); // 60000ms = 1분
     
     // return () => clearInterval(intervalId);
-  }, [popularStocks]);
+  }, [popularStocks, koreanSectorNames]);
   
   // 주가 예측 데이터 가져오기 - AJAX 구현
   const fetchPredictionData = async (symbol) => {
@@ -114,6 +128,12 @@ const Dashboard = ({ popularStocks, koreanStockNames }) => {
       setLastUpdateTime(new Date().toLocaleString()); // 업데이트 시간 기록
     } catch (error) {
       console.error(`${symbol} 예측 데이터를 불러오는 중 오류 발생:`, error);
+      
+      // 오류 시 더 자세한 로깅 추가
+      if (error.response) {
+        console.error('서버 오류 상태:', error.response.status);
+        console.error('서버 오류 데이터:', error.response.data);
+      }
       
       // 오류 시 가짜 데이터 생성
       const fakePredictionData = {
@@ -168,8 +188,8 @@ const Dashboard = ({ popularStocks, koreanStockNames }) => {
     fetchPredictionData(symbol);
   };
 
-  // 주요 예측 태그 (상위 5개 주식)
-  const predictionTags = popularStocks.slice(0, 5).map(stock => stock.symbol);
+  // 주요 예측 태그 (상위 10개 주식)
+  const predictionTags = popularStocks.slice(0, DISPLAY_PREDICTION_COUNT).map(stock => stock.symbol);
 
   if (isLoading) {
     return (
@@ -237,6 +257,7 @@ const Dashboard = ({ popularStocks, koreanStockNames }) => {
               stock={stock} 
               onClick={() => handleStockClick(stock.symbol)}
               koreanStockNames={koreanStockNames}
+              koreanSectorNames={koreanSectorNames}
             />
           ))}
         </div>

@@ -125,7 +125,14 @@ def predict_stock(ticker):
         
         return jsonify(results)
     except Exception as e:
-        return jsonify({'error': str(e)}), 400
+        # 자세한 오류 로깅
+        app.logger.error(f"Error generating prediction for {ticker}: {str(e)}")
+        
+        # 클라이언트에게 상세 오류 메시지 대신 간단한 오류 응답
+        return jsonify({
+            'error': '예측 생성 오류',
+            'message': '요청에 실패했습니다. 나중에 다시 시도해주세요.'
+        }), 500
 
 @app.route('/api/stocks/popular', methods=['GET'])
 def get_popular_stocks():

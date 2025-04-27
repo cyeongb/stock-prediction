@@ -460,7 +460,8 @@ body {
   display: flex;
   flex-wrap: wrap;
   gap: 0.5rem;
-  margin-bottom: 1rem;
+  margin-bottom: 1.5rem;
+  max-width: 100%;
 }
 
 .prediction-tag {
@@ -472,10 +473,15 @@ body {
   cursor: pointer;
   transition: var(--transition);
   font-size: 0.9rem;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  overflow: hidden;
+  max-width: 180px;
 }
 
 .prediction-tag:hover {
   background-color: var(--dark-card-hover);
+  transform: translateY(-2px);
 }
 
 .prediction-tag.active {
@@ -724,6 +730,16 @@ body {
   
   .prediction-stats {
     flex-direction: column;
+  }
+  
+  .prediction-tags {
+    gap: 0.3rem;
+  }
+  
+  .prediction-tag {
+    padding: 0.4rem 0.8rem;
+    font-size: 0.8rem;
+    max-width: 150px;
   }
 }
 

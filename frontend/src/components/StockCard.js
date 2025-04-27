@@ -5,7 +5,7 @@ import Plot from 'react-plotly.js';
 // 아이콘
 import { FaStar, FaRegStar } from 'react-icons/fa';
 
-const StockCard = ({ stock, onClick, koreanStockNames }) => {
+const StockCard = ({ stock, onClick, koreanStockNames, koreanSectorNames }) => {
   const [chartData, setChartData] = useState(null);
   const [isWatchlisted, setIsWatchlisted] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
@@ -81,6 +81,10 @@ const StockCard = ({ stock, onClick, koreanStockNames }) => {
 
   // 한국어 이름 가져오기
   const koreanName = koreanStockNames[stock.symbol] || stock.name;
+  
+  // 한국어 섹터 및 산업 가져오기
+  const koreanSector = koreanSectorNames && koreanSectorNames[stock.sector] || stock.sector;
+  const koreanIndustry = koreanSectorNames && koreanSectorNames[stock.industry] || stock.industry;
 
   return (
     <div className="card stock-card" onClick={onClick}>
@@ -148,8 +152,8 @@ const StockCard = ({ stock, onClick, koreanStockNames }) => {
       </div>
       
       <div className="card-footer">
-        <div className="sector">{stock.sector || 'N/A'}</div>
-        <div className="industry">{stock.industry || 'N/A'}</div>
+        <div className="sector">{koreanSector || '해당 없음'}</div>
+        <div className="industry">{koreanIndustry || '해당 없음'}</div>
       </div>
     </div>
   );
