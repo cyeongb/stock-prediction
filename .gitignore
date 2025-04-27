@@ -1,0 +1,81 @@
+# Python 관련
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+env/
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+*.egg-info/
+.installed.cfg
+*.egg
+venv/
+.env
+.venv
+ENV/
+
+# Flask 로그 및 캐시
+backend/cache/
+instance/
+.webassets-cache
+
+# PyTorch 모델 파일
+*.pt
+*.pth
+
+# React / Node.js 관련
+node_modules/
+/frontend/node_modules
+/frontend/.pnp
+/frontend/.pnp.js
+/frontend/coverage
+/frontend/build
+/frontend/.DS_Store
+/frontend/.env.local
+/frontend/.env.development.local
+/frontend/.env.test.local
+/frontend/.env.production.local
+/frontend/npm-debug.log*
+/frontend/yarn-debug.log*
+/frontend/yarn-error.log*
+
+# 개발 환경 설정
+.vscode/
+.idea/
+*.swp
+*.swo
+.DS_Store
+
+# 로그 파일
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.pnpm-debug.log*
+
+# 로컬 환경 변수
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+# 테스트 관련
+/coverage
+
+# 빌드 폴더
+/build
+/dist
+
+# 기타
+.DS_Store
+Thumbs.db

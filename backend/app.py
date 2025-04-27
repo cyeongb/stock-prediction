@@ -1,0 +1,175 @@
+from flask import Flask, jsonify, request
+from flask_cors import CORS
+import yfinance as yf
+from datetime import datetime, timedelta
+import pandas as pd
+import os
+import json
+
+# 모델 임포트
+from model import get_stock_prediction
+
+app = Flask(__name__)
+CORS(app)  # 크로스 오리진 요청 허용
+
+# 캐시 디렉토리
+CACHE_DIR = 'cache'
+os.makedirs(CACHE_DIR, exist_ok=True)
+
+# 캐시 파일 경로 생성
+def get_cache_path(ticker, timeframe='daily'):
+    return os.path.join(CACHE_DIR, f"{ticker}_{timeframe}.json")
+
+# 캐시 데이터 로드
+def load_cache(ticker, timeframe='daily'):
+    cache_path = get_cache_path(ticker, timeframe)
+    if os.path.exists(cache_path):
+        with open(cache_path, 'r') as f:
+            data = json.load(f)
+            # 캐시가 24시간 이내인지 확인
+            cache_time = datetime.strptime(data.get('timestamp', '2000-01-01'), '%Y-%m-%d %H:%M:%S')
+            if datetime.now() - cache_time < timedelta(hours=24):
+                return data
+    return None
+
+# 캐시 데이터 저장
+def save_cache(ticker, data, timeframe='daily'):
+    cache_path = get_cache_path(ticker, timeframe)
+    data['timestamp'] = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+    with open(cache_path, 'w') as f:
+        json.dump(data, f)
+
+@app.route('/api/stocks/info/<ticker>', methods=['GET'])
+def get_stock_info(ticker):
+    try:
+        stock = yf.Ticker(ticker)
+        info = stock.info
+        # 필요한 정보만 추출
+        basic_info = {
+            'symbol': ticker,
+            'name': info.get('shortName', ''),
+            'sector': info.get('sector', ''),
+            'industry': info.get('industry', ''),
+            'logo': info.get('logo_url', ''),
+            'website': info.get('website', ''),
+            'description': info.get('longBusinessSummary', ''),
+            'market_cap': info.get('marketCap', 0),
+            'pe_ratio': info.get('trailingPE', 0),
+            'dividend_yield': info.get('dividendYield', 0),
+            'fifty_two_week_high': info.get('fiftyTwoWeekHigh', 0),
+            'fifty_two_week_low': info.get('fiftyTwoWeekLow', 0)
+        }
+        return jsonify(basic_info)
+    except Exception as e:
+        return jsonify({'error': str(e)}), 400
+
+@app.route('/api/stocks/history/<ticker>', methods=['GET'])
+def get_stock_history(ticker):
+    timeframe = request.args.get('timeframe', 'daily')  # daily, weekly, monthly, yearly
+    period = request.args.get('period', '5y')  # 1d, 5d, 1mo, 3mo, 6mo, 1y, 2y, 5y, 10y, ytd, max
+    
+    # 캐시 확인
+    cache_key = f"{ticker}_{timeframe}_{period}"
+    cached_data = load_cache(ticker, cache_key)
+    if cached_data:
+        return jsonify(cached_data)
+    
+    try:
+        # yfinance에서 데이터 가져오기
+        stock = yf.Ticker(ticker)
+        
+        # 데이터 다운로드
+        hist = stock.history(period=period)
+        
+        # 타임프레임에 따라 리샘플링
+        if timeframe == 'weekly':
+            hist = hist.resample('W').last()
+        elif timeframe == 'monthly':
+            hist = hist.resample('M').last()
+        elif timeframe == 'yearly':
+            hist = hist.resample('Y').last()
+        
+        # 결과 포맷팅
+        result = {
+            'dates': [d.strftime('%Y-%m-%d') for d in hist.index],
+            'open': hist['Open'].tolist(),
+            'high': hist['High'].tolist(),
+            'low': hist['Low'].tolist(),
+            'close': hist['Close'].tolist(),
+            'volume': hist['Volume'].tolist()
+        }
+        
+        # 캐시 저장
+        save_cache(ticker, result, cache_key)
+        
+        return jsonify(result)
+    except Exception as e:
+        return jsonify({'error': str(e)}), 400
+
+@app.route('/api/stocks/predict/<ticker>', methods=['GET'])
+def predict_stock(ticker):
+    days = int(request.args.get('days', 30))
+    
+    # 캐시 확인
+    cache_key = f"{ticker}_prediction_{days}"
+    cached_data = load_cache(ticker, cache_key)
+    if cached_data:
+        return jsonify(cached_data)
+    
+    try:
+        # 예측 모델 실행
+        results = get_stock_prediction(ticker, prediction_days=days)
+        
+        # 캐시 저장
+        save_cache(ticker, results, cache_key)
+        
+        return jsonify(results)
+    except Exception as e:
+        return jsonify({'error': str(e)}), 400
+
+@app.route('/api/stocks/popular', methods=['GET'])
+def get_popular_stocks():
+    # 인기 주식 목록 (하드코딩)
+    popular_stocks = [
+        {'symbol': 'AAPL', 'name': 'Apple Inc.', 'sector': 'Technology'},
+        {'symbol': 'MSFT', 'name': 'Microsoft Corporation', 'sector': 'Technology'},
+        {'symbol': 'GOOGL', 'name': 'Alphabet Inc.', 'sector': 'Technology'},
+        {'symbol': 'AMZN', 'name': 'Amazon.com Inc.', 'sector': 'Consumer Cyclical'},
+        {'symbol': 'TSLA', 'name': 'Tesla, Inc.', 'sector': 'Consumer Cyclical'},
+        {'symbol': 'META', 'name': 'Meta Platforms, Inc.', 'sector': 'Communication Services'},
+        {'symbol': 'NVDA', 'name': 'NVIDIA Corporation', 'sector': 'Technology'},
+        {'symbol': 'JPM', 'name': 'JPMorgan Chase & Co.', 'sector': 'Financial Services'},
+        {'symbol': 'V', 'name': 'Visa Inc.', 'sector': 'Financial Services'},
+        {'symbol': 'WMT', 'name': 'Walmart Inc.', 'sector': 'Consumer Defensive'}
+    ]
+    return jsonify(popular_stocks)
+
+@app.route('/api/stocks/search', methods=['GET'])
+def search_stocks():
+    query = request.args.get('q', '').upper()
+    if not query:
+        return jsonify([])
+    
+    try:
+        # yfinance에서 검색 (간단한 구현)
+        tickers = yf.Tickers(query)
+        results = []
+        
+        # 실제 구현에서는 더 많은 검색 로직 필요
+        for ticker in tickers.tickers:
+            try:
+                info = ticker.info
+                results.append({
+                    'symbol': ticker.ticker,
+                    'name': info.get('shortName', ''),
+                    'sector': info.get('sector', '')
+                })
+            except:
+                pass
+        
+        return jsonify(results)
+    except Exception as e:
+        return jsonify([])
+
+if __name__ == '__main__':
+    app.run(debug=True, port=5000)
