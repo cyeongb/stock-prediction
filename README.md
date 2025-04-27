@@ -31,13 +31,12 @@
 - **CSS3**: 넷플릭스 스타일 UI 디자인
 
 
-## 사용법
-
-1. 웹 브라우저에서 `http://localhost:3000`에 접속
-2. 대시보드에서 인기 주식 확인
-3. 검색 기능을 통해 원하는 종목 검색
-4. 종목 상세 페이지에서 주가 차트 및 예측 결과 확인
-5. 관심 종목 목록에 추가하여 관리
+## 기능
+1. 대시보드에서 시장지수 조회.
+2. 대시보드에서 인기 주식 top 10 조회.
+3. 대시보드에서 top 10 인기주식의 예측 주가 확인. 
+4. 종목 상세 페이지에서 주가 차트 및 예측 결과 확인.
+5. 관심 종목 목록에 추가하여 조회 가능.
 
 ## 프로젝트 구조
 
@@ -59,14 +58,15 @@ stock-prediction-app/
 │   ├── package.json      # 프론트엔드 의존성
 │   └── README.md
 └── README.md             # 프로젝트 설명
-```
 
-## 주의사항
+-----
 
-- 이 애플리케이션에서 제공하는 예측 정보는 참고용일 뿐이며, 투자 결정에 직접적으로 사용해서는 안 됩니다.
-- 모든 투자 결정에 대한 책임은 투자자 본인에게 있습니다.
-- 실제 투자에는 본 도구 외에도 다양한 요소를 고려해야 합니다.
+<img width="934" alt="image" src="https://github.com/user-attachments/assets/6e0982c7-0288-45f3-ae74-97a98bd35998" />
 
-## 라이선스
 
-MIT License
+<img width="934" alt="image" src="https://github.com/user-attachments/assets/a9c23ae0-0b19-442f-832a-eadadce59aba" />
+
+
+<img width="935" alt="image" src="https://github.com/user-attachments/assets/9e3932a7-735e-4dc6-b478-42a665db3c3d" />
+
+
