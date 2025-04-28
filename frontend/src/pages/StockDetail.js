@@ -199,7 +199,8 @@ const StockDetail = ({ koreanStockNames, koreanSectorNames }) => {
             <div className="meta-item">
               <span className="label">P/E 비율</span>
               <span className="value">
-                {stockInfo.pe_ratio ? stockInfo.pe_ratio.toFixed(2) : 'N/A'}
+                {console.log("stockInfo.pe_ratio =>> ",stockInfo.pe_ratio)}
+                {stockInfo.pe_ratio ? stockInfo.pe_ratio.toFixed(2) : '0'}
               </span>
             </div>
           </div>
@@ -374,10 +375,7 @@ const StockDetail = ({ koreanStockNames, koreanSectorNames }) => {
                 koreanName={koreanName}
               />
             </div>
-            <div className="card-footer">
-              <p>PyTorch LSTM 모델을 사용한 예측 결과입니다.</p>
-              <p>주의: 예측은 참고용일 뿐이며, 투자 결정은 다양한 요소를 고려해야 합니다.</p>
-            </div>
+      
           </div>
         </section>
       )}

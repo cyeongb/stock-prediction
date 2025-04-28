@@ -7,8 +7,8 @@ import Plot from 'react-plotly.js';
 import StockCard from '../components/StockCard';
 
 const Dashboard = ({ popularStocks, koreanStockNames, koreanSectorNames }) => {
-  const [trendingStocks, setTrendingStocks] = useState([]);
-  const [marketIndices, setMarketIndices] = useState([]);
+  const [trendingStocks, setTrendingStocks] = useState([]);    //인기주식
+  const [marketIndices, setMarketIndices] = useState([]);  //시장지수
   const [isLoading, setIsLoading] = useState(true);
   const [selectedPreviewStock, setSelectedPreviewStock] = useState('AAPL'); // 기본값은 AAPL
   const [predictionData, setPredictionData] = useState(null);
@@ -16,10 +16,10 @@ const Dashboard = ({ popularStocks, koreanStockNames, koreanSectorNames }) => {
   const [lastUpdateTime, setLastUpdateTime] = useState(new Date().toLocaleString()); // 업데이트 시간
   const navigate = useNavigate();
 
-  // 대시보드에 표시할 주식 수 증가 (5개 -> 10개)
+  // 대시보드에 표시할 주식 수
   const DISPLAY_STOCK_COUNT = 10;
   
-  // 예측 미리보기에 표시할 주식 수 증가 (5개 -> 10개)
+  // 예측 미리보기에 표시할 주식 수 
   const DISPLAY_PREDICTION_COUNT = 10;
 
   useEffect(() => {
@@ -28,14 +28,14 @@ const Dashboard = ({ popularStocks, koreanStockNames, koreanSectorNames }) => {
       try {
         // 인기 주식 가져오기 (popularStocks를 props로 받음)
         if (popularStocks.length > 0) {
-          // 각 인기 주식의 기본 정보 가져오기 (10개로 증가)
+          // 각 인기 주식의 기본 정보 가져오기
           const stockDetailsPromises = popularStocks.slice(0, DISPLAY_STOCK_COUNT).map(stock => 
             axios.get(`/stocks/info/${stock.symbol}`)
               .catch(() => ({ data: { 
                 symbol: stock.symbol, 
                 name: stock.name, 
                 sector: stock.sector,
-                industry: stock.industry || 'N/A'
+                industry: stock.industry || ' '
               }}))
           );
           
@@ -179,6 +179,7 @@ const Dashboard = ({ popularStocks, koreanStockNames, koreanSectorNames }) => {
 
   // 주식 카드 클릭 처리
   const handleStockClick = (symbol) => {
+    console.log("symbol =>> ",symbol);
     navigate(`/stock/${symbol}`);
   };
 
