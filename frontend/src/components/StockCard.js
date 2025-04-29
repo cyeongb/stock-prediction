@@ -1,3 +1,4 @@
+// StockCard.js
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import Plot from 'react-plotly.js';
@@ -5,7 +6,7 @@ import Plot from 'react-plotly.js';
 // 아이콘
 import { FaStar, FaRegStar } from 'react-icons/fa';
 
-const StockCard = ({ stock, onClick, koreanStockNames, koreanSectorNames }) => {
+const StockCard = ({ stock, onClick, koreanStockNames={}, koreanSectorNames={} }) => {
   const [chartData, setChartData] = useState(null);
   const [isWatchlisted, setIsWatchlisted] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
@@ -74,16 +75,27 @@ const StockCard = ({ stock, onClick, koreanStockNames, koreanSectorNames }) => {
     setIsWatchlisted(!isWatchlisted);
   };
 
+  const generateRealisticPriceChange = (symbol) => {
+    // 심볼별 시드를 사용하여 주식마다 다른 변화율 생성
+    const symbolValue = symbol.split('').reduce((acc, char) => acc + char.charCodeAt(0), 0);
+    const seed = symbolValue / 100; // 심볼을 기반으로 한 시드 값
+    
+    // -5% ~ +5% 사이의 변화율 생성 (약간 상향 바이어스)
+    const random = Math.sin(seed) * 0.5 + 0.05; // -0.45 ~ +0.55 사이의 값
+    
+    // 주식에 따라 다른 변화율 반환
+    return random * 10; // -4.5% ~ +5.5% 사이의 값
+  };
+
   // 가격 변화율 계산
   const priceChange = stock.fiftyTwoWeekHigh && stock.fiftyTwoWeekLow
     ? ((stock.market_cap / 1000000) % 10) - 5 // 임의의 변화율 (실제로는 API에서 가져온 값 사용)
-    : 0;
+    : generateRealisticPriceChange(stock.symbol);
 
   // 한국어 이름 가져오기
-  const koreanName = koreanStockNames[stock.symbol] || stock.name;
-  
+  const koreanName = (koreanStockNames && koreanStockNames[stock.symbol]) || stock.name;
   // 한국어 섹터 및 산업 가져오기
-  const koreanSector = koreanSectorNames && koreanSectorNames[stock.sector] || stock.sector;
+  const koreanSector = (koreanSectorNames && stock.sector && koreanSectorNames[stock.sector]) || stock.sector || ' ';
   const koreanIndustry = koreanSectorNames && koreanSectorNames[stock.industry] || stock.industry;
 
   return (
@@ -152,8 +164,8 @@ const StockCard = ({ stock, onClick, koreanStockNames, koreanSectorNames }) => {
       </div>
       
       <div className="card-footer">
-        <div className="sector">{koreanSector || '해당 없음'}</div>
-        <div className="industry">{koreanIndustry || '해당 없음'}</div>
+        <div className="sector">{koreanSector}</div>
+        <div className="industry">{koreanIndustry || ' '}</div>
       </div>
     </div>
   );

@@ -1,3 +1,4 @@
+//App.js
 import React, { useState, useEffect } from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import axios from 'axios';
@@ -7,7 +8,6 @@ import Navbar from './components/Navbar';
 import Sidebar from './components/Sidebar';
 import Dashboard from './pages/Dashboard';
 import StockDetail from './pages/StockDetail';
-import Search from './pages/Search';
 import Watchlist from './pages/Watchlist';
 
 // 스타일
@@ -195,7 +195,6 @@ function App() {
               <Route path="/" element={<Navigate to="/dashboard" />} />
               <Route path="/dashboard" element={<Dashboard popularStocks={popularStocks} koreanStockNames={koreanStockNames} koreanSectorNames={koreanSectorNames} />} />
               <Route path="/stock/:ticker" element={<StockDetail koreanStockNames={koreanStockNames} koreanSectorNames={koreanSectorNames} />} />
-              <Route path="/search" element={<Search setSelectedStock={setSelectedStock} koreanStockNames={koreanStockNames} koreanSectorNames={koreanSectorNames} />} />
               <Route path="/watchlist" element={<Watchlist setSelectedStock={setSelectedStock} koreanStockNames={koreanStockNames} koreanSectorNames={koreanSectorNames} />} />
             </Routes>
           </main>

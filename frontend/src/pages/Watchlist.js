@@ -1,8 +1,9 @@
+//Watchlist.js
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 
-// 컴포넌트
+// 개별 주식 컴포넌트
 import StockCard from '../components/StockCard';
 
 const Watchlist = ({ setSelectedStock }) => {
@@ -32,12 +33,14 @@ const Watchlist = ({ setSelectedStock }) => {
 
       setIsLoading(true);
       try {
-        // 각 관심종목의 정보 가져오기
+        // 각 관심종목의 정보 가져오기 symbol: 종목
         const stockPromises = watchlist.map(symbol => 
           axios.get(`/stocks/info/${symbol}`)
         );
         
+        //Promise.all : 모든 api 요청 실행
         const stockResponses = await Promise.all(stockPromises);
+        console.log("stockResponses =>>> ",stockResponses);
         const stocksData = stockResponses.map(response => response.data);
         
         setWatchlistData(stocksData);
