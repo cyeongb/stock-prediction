@@ -75,7 +75,3 @@ stock-prediction-app/
 │   ├── package.json      # 프론트엔드 의존성
 │   └── README.md
 └── README.md             # 프로젝트 설명
-
------
-
-
