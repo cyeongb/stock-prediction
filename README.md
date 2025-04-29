@@ -17,7 +17,7 @@
 
 ### 백엔드
 - **Python**: 메인 서버 개발 언어
-- **PyTorch**: 딥러닝 모델 구현
+- **scikit-learn**: 머신러닝 라이브러리 - linear_model (선형회귀)
 - **yfinance**: Yahoo Finance 데이터 크롤링
 - **pandas**: 데이터 처리 및 분석
 - **Flask**: REST API 서버
