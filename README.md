@@ -1,14 +1,14 @@
 # StockFlix - 딥러닝 기반 주가 예측 & 시각화 대시보드
 
 - StockFlix는 딥러닝 모델을 활용한 주가 예측 및 시각화 대시보드 애플리케이션. 
-- 넷플릭스 스타일
+- 넷플릭스 스타일 + 사용자친화적
 - UI 모바일에서도 쉽게 이용 가능한 반응형 SPA.
 
 
 ## 주요 기능
 
 - **실시간 주가 데이터 시각화**: 일별/주별/월별/연별 주가 차트
-- **PyTorch 기반 딥러닝 모델**: LSTM 모델을 활용한 주가 예측
+- **선형회귀 머신러닝 모델**: 선형회귀를 사용한 미 주가 예측
 - **다양한 차트 유형**: 선형 차트, 캔들스틱 차트
 - **관심종목 관리**: 즐겨찾는 주식 저장 및 관리
 - **반응형 디자인**: 모바일 및 데스크톱에서 모두 최적화된 UI
@@ -28,7 +28,7 @@
 - **React Router**: 클라이언트 사이드 라우팅
 - **Plotly.js**: 데이터 시각화
 - **axios**: HTTP 요청 처리
-- **CSS3**: 넷플릭스 스타일 UI 디자인
+- **CSS3**: 넷플릭스 스타일 UI 
 
 
 ## 기능
@@ -40,12 +40,13 @@
 
 <img width="934" alt="image" src="https://github.com/user-attachments/assets/6e0982c7-0288-45f3-ae74-97a98bd35998" />
 
-
+----
 <img width="934" alt="image" src="https://github.com/user-attachments/assets/a9c23ae0-0b19-442f-832a-eadadce59aba" />
 
-
+----
 <img width="935" alt="image" src="https://github.com/user-attachments/assets/9e3932a7-735e-4dc6-b478-42a665db3c3d" />
 
+----
 ## 프로젝트 구조
 
 ```
@@ -59,7 +60,15 @@ stock-prediction-app/
 │   ├── public/
 │   ├── src/
 │   │   ├── components/   # 재사용 가능한 UI 컴포넌트
+|   |           ├──  Navbar.js  # 네비게이션 바
+|   |           ├──  PredictionChart.js  # 주식 예측 차트
+|   |           ├──  Sidebar.js  #사이드바
+|   |           └──  StockCard.js  # 주식카드
+|   |            
 │   │   ├── pages/        # 페이지 컴포넌트
+|   |         ├──  Dashboard.js  # 메인화면
+|   |         ├──  StockDetail.js  # 주식 디테일
+|   |         └──  Watchlist.js  #  관심종목
 │   │   ├── App.js        # 메인 앱 컴포넌트
 │   │   ├── App.css       # 넷플릭스 스타일 CSS
 │   │   └── index.js      # 앱 진입점
