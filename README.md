@@ -38,6 +38,14 @@
 4. 종목 상세 페이지에서 주가 차트 및 예측 결과 확인.
 5. 관심 종목 목록에 추가하여 조회 가능.
 
+<img width="934" alt="image" src="https://github.com/user-attachments/assets/6e0982c7-0288-45f3-ae74-97a98bd35998" />
+
+
+<img width="934" alt="image" src="https://github.com/user-attachments/assets/a9c23ae0-0b19-442f-832a-eadadce59aba" />
+
+
+<img width="935" alt="image" src="https://github.com/user-attachments/assets/9e3932a7-735e-4dc6-b478-42a665db3c3d" />
+
 ## 프로젝트 구조
 
 ```
@@ -60,13 +68,5 @@ stock-prediction-app/
 └── README.md             # 프로젝트 설명
 
 -----
-
-<img width="934" alt="image" src="https://github.com/user-attachments/assets/6e0982c7-0288-45f3-ae74-97a98bd35998" />
-
-
-<img width="934" alt="image" src="https://github.com/user-attachments/assets/a9c23ae0-0b19-442f-832a-eadadce59aba" />
-
-
-<img width="935" alt="image" src="https://github.com/user-attachments/assets/9e3932a7-735e-4dc6-b478-42a665db3c3d" />
 
 
