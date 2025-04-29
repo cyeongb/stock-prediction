@@ -444,7 +444,7 @@ const Dashboard = ({ popularStocks, koreanStockNames, koreanSectorNames }) => {
             )}
           </div>
           <div className="card-footer">
-            <p>딥러닝 모델 기반 예측 - 정확도: 85%</p>
+            {/* <p>머신러닝 모델 기반 예측 - 정확도: 85%</p> */}
             <p>마지막 업데이트: {lastUpdateTime}</p>
           </div>
         </div>

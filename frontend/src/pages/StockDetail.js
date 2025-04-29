@@ -365,7 +365,7 @@ const StockDetail = ({ koreanStockNames, koreanSectorNames }) => {
 
       {predictionData && (
         <section className="prediction-section">
-          <h2 className="section-title">딥러닝 기반 주가 예측</h2>
+          <h2 className="section-title">머신러닝 기반 주가 예측</h2>
           <div className="card">
             <div className="card-header">
               <h3 className="card-title">향후 30일 예측 결과</h3>

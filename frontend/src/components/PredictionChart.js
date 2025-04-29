@@ -65,7 +65,7 @@ const PredictionChart = ({ predictionData, koreanName }) => {
           }
         ]}
         layout={{
-          title: `${stockTitle} 딥러닝 모델 주가 예측 결과`,
+          title: `${stockTitle} 머신러닝 모델 주가 예측 결과`,
           autosize: true,
           height: 500,
           margin: { l: 50, r: 50, t: 80, b: 50 },
