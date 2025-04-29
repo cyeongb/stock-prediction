@@ -51,7 +51,7 @@
 ```
 stock-prediction-app/
 ├── backend/
-│   ├── model.py          # PyTorch 기반 주가 예측 모델
+│   ├── model.py          # 선형회귀 모델 기반 주가 예측 모델
 │   ├── app.py            # Flask API 서버
 │   ├── requirements.txt  # 백엔드 의존성
 │   └── cache/            # 데이터 캐싱 디렉토리
@@ -72,5 +72,4 @@ stock-prediction-app/
 │   │   ├── App.css       # 넷플릭스 스타일 CSS
 │   │   └── index.js      # 앱 진입점
 │   ├── package.json      # 프론트엔드 의존성
-│   └── README.md
 └── README.md             # 프로젝트 설명
