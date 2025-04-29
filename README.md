@@ -46,7 +46,7 @@
 <img width="935" alt="image" src="https://github.com/user-attachments/assets/9e3932a7-735e-4dc6-b478-42a665db3c3d" />
 
 ----
-## 프로젝트 구조
+# ⭐ 프로젝트 구조
 
 ```
 stock-prediction-app/
