@@ -115,6 +115,7 @@ def predict_with_linear_regression(ticker, stock_data, prediction_days=30):
     
     # 선형 회귀 모델 학습
     model = LinearRegression()
+    # fit() 모델을 데이터에 맞춰 학습시키는 함수
     model.fit(X_train, y_train)
     
     # 테스트 데이터 예측

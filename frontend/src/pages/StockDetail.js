@@ -51,16 +51,16 @@ const StockDetail = ({ koreanStockNames, koreanSectorNames }) => {
         
         setStockInfo(stockInfoData);
         
-        // 주식 역사 데이터 가져오기
+        // 주식 과거거 데이터 가져오기
         try {
           const historyResponse = await axios.get(`/stocks/history/${ticker}`, {
             params: { timeframe, period }
           });
           setHistoricalData(historyResponse.data);
         } catch (error) {
-          console.error('주식 역사 데이터를 불러오는 중 오류 발생:', error);
+          console.error('주식 과거 데이터를 불러오는 중 오류 발생:', error);
           
-          // 가짜 역사 데이터 생성
+          // 가짜 과거 데이터 생성
           const dates = Array.from({ length: 252 }, (_, i) => 
             new Date(Date.now() - (252 - i) * 24 * 60 * 60 * 1000).toISOString().slice(0, 10)
           );
