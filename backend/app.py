@@ -179,23 +179,21 @@ def predict_stock(ticker):
         
         return jsonify(results)
     except Exception as e:
-        # 자세한 오류 로깅
+
         logger.error(f"주가 예측 처리 예외: {ticker}, {str(e)}")
-        
-        # 클라이언트에게 상세 오류 메시지 대신 간단한 오류 응답
         return jsonify({
             'error': '예측 생성 오류',
             'message': '요청에 실패했습니다. 나중에 다시 시도해주세요.'
         }), 500
 
-# 프론트엔드와 API 경로 일치를 위한 라우트 추가 (추가)
+# 프론트엔드와 API 경로 일치를 위한 라우트 추가
 @app.route('/stocks/popular', methods=['GET'])
 def frontend_popular_stocks():
     return get_popular_stocks()
 
 @app.route('/api/stocks/popular', methods=['GET'])
 def get_popular_stocks():
-    # 인기 주식 목록 (하드코딩)
+    # 인기 주식 목록 (하드코딩 - 로딩중 보여주게..)
     popular_stocks = [
         {'symbol': 'AAPL', 'name': 'Apple Inc.', 'sector': 'Technology'},
         {'symbol': 'MSFT', 'name': 'Microsoft Corporation', 'sector': 'Technology'},
@@ -210,7 +208,7 @@ def get_popular_stocks():
     ]
     return jsonify(popular_stocks)
 
-# 프론트엔드와 API 경로 일치를 위한 라우트 추가 (추가)
+# 프론트엔드와 API 경로 일치를 위한 라우트 추가 
 @app.route('/stocks/search', methods=['GET'])
 def frontend_search_stocks():
     return search_stocks()

@@ -17,7 +17,7 @@ logger = logging.getLogger(__name__)
 MODELS_DIR = 'models'
 os.makedirs(MODELS_DIR, exist_ok=True)
 
-# 간소화된 주가 예측 함수
+# 주가 예측 함수
 #ticker : 주식 ticker symbol ('AAPL')
 # start_date : 데이터 시작 날짜, 기본값은 6개월 전
 # end_date : 데이터 종료 날짜, 기본값은 현재
@@ -33,7 +33,7 @@ def get_stock_prediction(ticker, start_date=None, end_date=None, prediction_days
         if end_date is None:
             end_date = datetime.now()
         if start_date is None:
-            # 6개월 데이터만 사용 (계산 속도 향상)
+            # 6개월 데이터만 사용
             start_date = end_date - timedelta(days=180)
         
         # 주가 데이터 다운로드
@@ -134,7 +134,7 @@ def predict_with_linear_regression(ticker, stock_data, prediction_days=30):
     for i in range(prediction_days):
         day = last_day + i + 1
         
-        # 간단한 선형 증가/감소 트렌드 적용 (실제로는 더 복잡한 예측 필요)
+        #  선형 증가/감소 트렌드 적용
         ma5_change = (last_ma5 - test_data['MA5'].iloc[-5]) / 5
         ma20_change = (last_ma20 - test_data['MA20'].iloc[-20]) / 20
         
