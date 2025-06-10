@@ -1,41 +1,41 @@
 
 # 📈 Stock Market Prediction & Data Visualization Dashboard 📉
-- 노션 : https://www.notion.so/cyeongb/5-_-1e3aa4605a0b80a08ed7f9e38e367c0b?pvs=4
+- Notion : https://www.notion.so/cyeongb/5-_-1e3aa4605a0b80a08ed7f9e38e367c0b?pvs=4
 
-- StockFlix는 머신러닝 모델을 활용한 주가 예측 및 시각화 대시보드 애플리케이션. 
-- 넷플릭스 스타일 + 사용자친화적
-- UI 모바일에서도 쉽게 이용 가능한 반응형 SPA.
-
-
- # 🎯주요 기능
-
-- **실시간 주가 데이터 시각화**: 일별/주별/월별/연별 주가 차트
-- **선형회귀 머신러닝 모델**: 선형회귀를 사용한 미 주가 예측
-- **다양한 차트 유형**: 선형 차트, 캔들스틱 차트
-- **관심종목 관리**: 즐겨찾는 주식 저장 및 관리
-- **반응형 디자인**: 모바일 및 데스크톱에서 모두 최적화된 UI
+- "The StockFlix" is an Application Stock Market Prediction & Data Visualization Dashboard with using machine learning model. 
+- Netflix theme UI + User friendly(UX)
+- Responsible UI for Mobile user.
 
 
-# 🖼️ 백엔드
-- **Python**: 메인 서버 개발 언어
-- **scikit-learn**: 머신러닝 라이브러리 - linear_model (선형회귀)
-- **yfinance**: Yahoo Finance 데이터 크롤링
-- **pandas**: 데이터 처리 및 분석
-- **Flask**: REST API 서버
-- **Flask-CORS**: 크로스 오리진 요청 처리
+ # 🎯Key Featurs
 
-# 🎨 프론트엔드
-- **React.js**: SPA 구현
-- **React Router**: 클라이언트 사이드 라우팅
-- **Plotly.js**: 데이터 시각화
-- **axios**: HTTP 요청 처리
-- **CSS3**: 넷플릭스 스타일 UI 
+- **Real-time Stock Price Data Visualization**: Daily/Weekly/Monthly/Yearly stock price charts
+- **Linear Regression Machine Learning Model**: Predicting US stock prices using linear regression
+- **Diverse Chart Types**: Line charts, Candlestick charts
+- **Watchlist Management**: Save and manage your favorite stocks
+- **Responsive Design**: Optimized UI for both mobile and desktop devices
 
 
-# ❤️ 기능
-1. 대시보드에서 시장지수 조회.
-2. 대시보드에서 인기 주식 top 10 조회.
-3. 대시보드에서 top 10 인기주식의 예측 주가 확인. 
+# 🖼️ BACK-END
+- **Python**: Language for main server메인 서버 개발 언어
+- **scikit-learn**: machine learning library - linear_model (선형회귀)
+- **yfinance**: Yahoo Finance data crawling
+- **pandas**: Data Handling and Analysis
+- **Flask**: REST API server
+- **Flask-CORS**: Process Cross-Origin request
+
+# 🎨 FRONT-END
+- **React.js**: SPA
+- **React Router**: client side routing
+- **Plotly.js**: Data Visualization
+- **Axios**: Process HTTP request
+- **CSS3**: UI Netflix style
+
+
+# ❤️ Domain
+1. Check Market Indices on the Dashboard.
+2. Check the Top 10 Popular Stocks on the Dashboard.
+3. Check Predicted Stock Prices for the Top 10 Popular Stocks from the Dashboard.
 4. 종목 상세 페이지에서 주가 차트 및 예측 결과 확인.
 5. 관심 종목 목록에 추가하여 조회 가능.
 
