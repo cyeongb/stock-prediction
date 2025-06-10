@@ -1,5 +1,5 @@
 
-# 📈 주가 예측 & 데이터 시각화 주식 대시보드 📉
+# 📈 Stock Market Prediction & Data Visualization Dashboard 📉
 - 노션 : https://www.notion.so/cyeongb/5-_-1e3aa4605a0b80a08ed7f9e38e367c0b?pvs=4
 
 - StockFlix는 머신러닝 모델을 활용한 주가 예측 및 시각화 대시보드 애플리케이션. 
